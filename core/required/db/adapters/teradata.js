@@ -79,13 +79,9 @@ class TeradataAdapter extends SQLAdapter {
 
     let start = new Date().valueOf();
 
-    teradata.connect(this.url,this.username,this.password, (err, client, complete) => {
+    teradata.connect(this.url,this.username,this.password).then(() => {
 
-      if (err) {
-        this.db.error(err.message);
-        callback(err);
-        return complete();
-      }
+      
 
       let queries = preparedArray.map(queryData => {
 
@@ -94,7 +90,7 @@ class TeradataAdapter extends SQLAdapter {
 
         return (callback) => {
           this.db.log(query, params, new Date().valueOf() - start);
-          client.query(queryData[0], queryData[1], callback);
+          Teradata.executeQuery(queryData[0], queryData[1]).then(callback);
         };
 
       });
