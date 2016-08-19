@@ -660,7 +660,7 @@ TeradataAdapter.prototype.types = {
     dbName: 'FLOAT'
   },
   string: {
-    dbName: 'VARCHAR'
+    dbName: 'VARCHAR(500)'
   },
   text: {
     dbName: 'TEXT'
