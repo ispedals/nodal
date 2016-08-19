@@ -488,7 +488,7 @@ class SQLAdapter {
                 ].join('') : ''
             ].join('')
           }).join(' '),
-          `LIMIT 1`,
+          `SAMPLE 1`,
         `) IS NOT NULL`
       ].join('');
 
