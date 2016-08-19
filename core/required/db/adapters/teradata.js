@@ -47,13 +47,16 @@ class TeradataAdapter extends SQLAdapter {
     let start = new Date().valueOf();
     let log = this.db.log.bind(this.db);
 	
-	 Teradata.connect(this.url,this.username,this.password)
+	Teradata.connect(this.url,this.username,this.password)
 	 .then(function () {       
 		 return Teradata.executeQuery(query);
 	 })
-	 .then(function (updateCount) {
-		 callback.apply(this, arguments);
-	}.bind(this));
+	 .then(function (result) {
+		 result = {rows:result, rowCount:result.length};
+		 callback.call(this, undefined, result);
+	}.bind(this), function (err) {
+		 callback.call(this, err, null);
+	}.bind(this))
 
     return true;
 
