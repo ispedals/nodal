@@ -26,7 +26,7 @@ class TeradataAdapter extends SQLAdapter {
 
   close() {
 
-    teradata.end();
+    //teradata.end();
 
   }
 
