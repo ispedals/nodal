@@ -25,7 +25,7 @@ class SchemaGenerator {
 
   fetch(callback) {
 
-    this.db.query('SELECT "schema_migrations"."schema" FROM "schema_migrations" ORDER BY "id" DESC LIMIT 1', [], (function(err, result) {
+    this.db.query('SELECT "schema_migrations"."schema" FROM "schema_migrations" ORDER BY "id" DESC SAMPLE 1', [], (function(err, result) {
 
       if (err) {
         return callback(err);
