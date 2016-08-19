@@ -578,7 +578,7 @@ class SQLAdapter {
   generateLimitClause(limitObj) {
 
     return (!limitObj) ? '' : [
-      ' LIMIT ',
+      ' SAMPLE ',
       limitObj.offset,
       ', ',
       limitObj.count
