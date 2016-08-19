@@ -162,7 +162,7 @@ class SQLAdapter {
     let formatTableField = (table, column) => `${this.escapeField(table)}.${this.escapeField(column)}`;
 
     if (typeof subQuery === 'object' && subQuery !== null) {
-      subQuery = this.escapeField(subQuery.table);
+      subQuery = (subQuery.table);
     } else {
       subQuery = subQuery ? `(${subQuery})` : table;
     }
