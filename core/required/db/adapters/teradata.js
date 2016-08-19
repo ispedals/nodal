@@ -95,61 +95,16 @@ class TeradataAdapter extends SQLAdapter {
 
       });
 
-      queries = [].concat(
-        (callback) => {
-          client.query('BEGIN', callback);
-        },
-        queries
-      );
 
       this.db.info('Transaction started...');
 
-      async.series(queries, (txnErr, results) => {
+      async.series(queries, (results) => {
 
-        if (txnErr) {
+            
+            callback(results);
 
-          this.db.error(txnErr.message);
-          this.db.info('Rollback started...');
 
-          client.query('ROLLBACK', (err) => {
-
-            if (err) {
-              this.db.error(`Rollback failed - ${err.message}`);
-              this.db.info('Transaction complete!');
-              complete();
-              callback(err);
-            } else {
-              this.db.info('Rollback complete!')
-              this.db.info('Transaction complete!');
-              complete();
-              callback(txnErr);
-            };
-
-          });
-
-        } else {
-
-          this.db.info('Commit started...');
-
-          client.query('COMMIT', (err) => {
-
-            if (err) {
-              this.db.error(`Commit failed - ${err.message}`);
-              this.db.info('Transaction complete!');
-              complete();
-              callback(err);
-              return;
-            }
-
-            this.db.info('Commit complete!')
-            this.db.info('Transaction complete!');
-            complete();
-            callback(null, results);
-
-          });
-
-        }
-
+ 
       });
 
     });
