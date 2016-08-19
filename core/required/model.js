@@ -205,6 +205,11 @@ class Model {
   static columnNames() {
     return this.columns().map(v => v.name);
   }
+  
+    static columnDescription() {
+    return this.columns().map(v => v.description);
+  }
+
 
   /**
   * Get the model's column lookup data
