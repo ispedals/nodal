@@ -47,9 +47,11 @@ class TeradataAdapter extends SQLAdapter {
     let start = new Date().valueOf();
     let log = this.db.log.bind(this.db);
 	
+	query = query.replace(/\$\d+/g,'?');
+
 	Teradata.connect(this.url,this.username,this.password)
-	 .then(function () {       
-		 return Teradata.executeQuery(query);
+	 .then(function () {
+		 return Teradata.executePreparedStatement(query,params);
 	 })
 	 .then(function (result) {
 		 result = {rows:result, rowCount:result.length};
