@@ -912,9 +912,11 @@ class Composer {
       this.db.query(query.sql, query.params, (err, result) => {
 
         let rows = result ? (result.rows || []).slice() : [];
-        let models = this.__parseModelsFromRows__(rows, grouped);
+		//console.log(rows[0].sum.floatValueSync());
+        /*let models = this.__parseModelsFromRows__(rows, grouped);
         models.setMeta({offset: offset, total: total});
-        callback.call(this, err, models);
+        callback.call(this, err, models);*/
+		callback.call(this,err,rows);
 
       });
 
