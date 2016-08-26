@@ -81,10 +81,10 @@ class RelationshipPath {
 
       if (edge.hasChild(node)) {
         join.prevColumn = edge.options.via;
-        join.joinColumn = 'id';
+        join.joinColumn = edge.options.joinsTo;
         join.joinAlias = edge.options.name;
       } else {
-        join.prevColumn = 'id';
+        join.prevColumn = edge.options.joinsTo;
         join.joinColumn = edge.options.via;
         join.joinAlias = edge.options.as;
       }
