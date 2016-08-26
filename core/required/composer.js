@@ -98,12 +98,12 @@ class Composer {
     let models = new ModelArray(this.Model);
 
     rows.forEach(row => {
-
-      let model = mainCache[row.id];
-
+		
+      let model = null;//mainCache[row.npi];
+		//console.log(mainCache);
       if (!model) {
-
-        model = mainCache[row.id] = new this.Model(columns.reduce((obj, k) => {
+		//console.log(mainCache[row.npi]);
+        model = mainCache[row.npi] = new this.Model(columns.reduce((obj, k) => {
           obj[k] = row[k];
           return obj;
         }, columnsObject), true);
@@ -132,10 +132,10 @@ class Composer {
         }
 
         let joinCache = cache[join.Model.name];
-        let joinModel = join.cachedModel = joinCache[id];
-
+        let joinModel = join.cachedModel = joinCache[npi];
+		console.log(' Join');
         if (!joinModel) {
-          joinModel = join.cachedModel = joinCache[id] = new join.Model(join.columns.reduce((obj, k) => {
+          joinModel = join.cachedModel = joinCache[npi] = new join.Model(join.columns.reduce((obj, k) => {
             obj[k] = row[`\$${join.name}\$${k}`];
             return obj;
           }, join.columnsObject), true)
