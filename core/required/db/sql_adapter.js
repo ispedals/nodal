@@ -476,7 +476,7 @@ class SQLAdapter {
           `FROM ${this.escapeField(jc.table)} `,
           jc.joins.map((join, i) => {
             return [
-              `INNER JOIN ${this.escapeField(join.joinTable)} AS ${this.escapeField(join.joinAlias)} ON `,
+              `INNER JOIN ${(join.joinTable)} AS ${this.escapeField(join.joinAlias)} ON `,
               `${this.escapeField(join.joinAlias)}.${this.escapeField(join.joinColumn)} = `,
               `${this.escapeField(join.prevTable || table)}.${this.escapeField(join.prevColumn)}`,
               i === jc.joins.length - 1 ?
@@ -514,7 +514,7 @@ class SQLAdapter {
   generateOrderByClause(table, orderByArray, groupByArray) {
 
     return !orderByArray.length ? '' : ' ORDER BY ' + orderByArray.map(v => {
-      let columns = v.columnNames.map(columnName => `${this.escapeField(table)}.${this.escapeField(columnName)}`);
+      let columns = v.columnNames.map(columnName => `${(table)}.${this.escapeField(columnName)}`);
       return `${(v.transformation || (v => v)).apply(null, columns)} ${v.direction}`;
     }).join(', ');
 
@@ -553,7 +553,7 @@ class SQLAdapter {
           join.multiFilter && join.multiFilter.forEach(arr => paramOffset += arr.length);
 
           return [
-            ` LEFT JOIN ${this.escapeField(join.joinTable)}`,
+            ` LEFT JOIN ${(join.joinTable)}`,
             ` AS ${this.escapeField(join.joinAlias)}`,
             ` ON (${statements.join(' OR ')}`,
             filterClause ? ` AND ${filterClause}` : '',
