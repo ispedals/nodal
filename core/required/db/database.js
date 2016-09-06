@@ -5,7 +5,7 @@ const colors = require('colors/safe');
 const DEFAULT_ADAPTER = 'postgres';
 const ADAPTERS = {
   'postgres': './adapters/postgres.js',  
-  'Teradata': './adapters/Teradata.js'
+  'Teradata': './adapters/teradata.js'
   
 };
 
