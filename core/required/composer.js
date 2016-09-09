@@ -378,7 +378,7 @@ class Composer {
   */
   __generateQuery__(includeColumns, disableJoins) {
 
-    disableJoins = disableJoins || this.__isGrouped__();
+    disableJoins = false;//disableJoins || this.__isGrouped__();
 
     let queryInfo = this.__reduceToQueryInformation__(this.__collapse__());
     let query = this.__reduceCommandsToQuery__(queryInfo.commands, includeColumns);
@@ -419,12 +419,12 @@ class Composer {
   __addJoinsToQuery__(query, queryInfo, includeColumns) {
 
     let columns = includeColumns || this.Model.columnNames();
-
+	let joinColumns=[];
     let joins = queryInfo.joins;
-
     Object.keys(joins).forEach(joinName => {
       joins[joinName].forEach(j => {
         columns = columns.concat(this.__joinedColumns__(j.joinAlias));
+		joinColumns = ['*'];//joinColumns.concat(this.__joinedColumns__(j.joinAlias));
       });
     });
 
@@ -449,10 +449,9 @@ class Composer {
     // Because we add in a bunch of parameters at the end.
 
     return {
-      sql: this.db.adapter.generateSelectQuery(
+      sql: this.db.adapter.generateSelectAllQuery(
         query.sql,
         'j',
-        columns,
         null,
         joins,
         null,

@@ -192,6 +192,34 @@ class SQLAdapter {
 
   }
 
+    generateSelectAllQuery(subQuery, table,  multiFilter, joinArray, groupByArray, orderByArray, limitObj, paramOffset) {
+
+    let formatTableField = (table, column) => `${this.escapeField(table)}.${this.escapeField(column)}`;
+
+    if (typeof subQuery === 'object' && subQuery !== null) {
+      subQuery = (subQuery.table);
+    } else {
+      subQuery = subQuery ? `(${subQuery})` : table;
+    }
+
+    groupByArray = groupByArray || [];
+    orderByArray = orderByArray || [];
+
+    return [
+      'SELECT *',
+      ' FROM ',
+        subQuery,
+        ' AS ',
+        this.escapeField(table),
+        this.generateJoinClause(table, joinArray, paramOffset),
+        this.generateWhereClause(table, multiFilter, paramOffset),
+        this.generateGroupByClause(table, groupByArray),
+        this.generateOrderByClause(table, orderByArray, groupByArray),
+        this.generateLimitClause(limitObj)
+    ].join('');
+
+  }
+  
   generateCountQuery(subQuery, table) {
 
     return [
