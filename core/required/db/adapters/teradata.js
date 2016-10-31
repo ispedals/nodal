@@ -19,14 +19,15 @@ class TeradataAdapter extends SQLAdapter {
 
     this.db = db;
     this._config = cfg;
-	this.username=cfg.user
-	this.password=cfg.password
-	this.url="jdbc:teradata://"+cfg.database+"/LOGMECH=LDAP"
+    this.username=cfg.user;
+    this.password=cfg.password;
+    this.url="jdbc:teradata://"+cfg.database+"/LOGMECH=LDAP";
+	teradata.connect(this.url,this.username,this.password);
   }
 
   close() {
 
-    //teradata.end();
+    teradata.disconnect();
 
   }
 
@@ -46,19 +47,19 @@ class TeradataAdapter extends SQLAdapter {
 
     let start = new Date().valueOf();
     let log = this.db.log.bind(this.db);
-	
-	query = query.replace(/\$\d+/g,'?');
-
-	Teradata.connect(this.url,this.username,this.password)
-	 .then(function () {
-		 return Teradata.executePreparedStatement(query,params);
-	 })
-	 .then(function (result) {
-		 result = {rows:result, rowCount:result.length};
-		 callback.call(this, undefined, result);
-	}.bind(this), function (err) {
-		 callback.call(this, err, null);
-	}.bind(this))
+    
+    query = query.replace(/\$\d+/g,'?');
+    
+    teradata.executePreparedStatement(query,params)
+	.then(
+		function (result) {
+			result = {rows:result, rowCount:result.length};
+			callback.call(this, undefined, result);
+		}.bind(this),
+		function (err) {
+			callback.call(this, err, null);
+		}.bind(this)
+	);
 
     return true;
 
@@ -66,54 +67,42 @@ class TeradataAdapter extends SQLAdapter {
 
   transaction(preparedArray, callback) {
 
-    if (!preparedArray.length) {
-      throw new Error('Must give valid array of statements (with or without parameters)');
-    }
+	if (!preparedArray.length) {
+	  throw new Error('Must give valid array of statements (with or without parameters)');
+	}
 
-    if (typeof preparedArray === 'string') {
-      preparedArray = preparedArray.split(';').filter(function(v) {
-        return !!v;
-      }).map(function(v) {
-        return [v];
-      });
-    }
+	if (typeof preparedArray === 'string') {
+	  preparedArray = preparedArray.split(';').filter(function(v) {
+		return !!v;
+	  }).map(function(v) {
+		return [v];
+	  });
+	}
 
-    if(typeof callback !== 'function') {
-      callback = function() {};
-    }
+	if(typeof callback !== 'function') {
+	  callback = function() {};
+	}
 
-    let start = new Date().valueOf();
+	let start = new Date().valueOf();
 
-    teradata.connect(this.url,this.username,this.password).then(() => {
+	let queries = preparedArray.map(queryData => {
 
-      
+		let query = queryData[0];
+		let params = queryData[1] || [];
 
-      let queries = preparedArray.map(queryData => {
+		return (callback) => {
+		  this.db.log(query, params, new Date().valueOf() - start);
+		  teradata.executeQuery(queryData[0], queryData[1]).then(callback);
+		};
 
-        let query = queryData[0];
-        let params = queryData[1] || [];
-
-        return (callback) => {
-          this.db.log(query, params, new Date().valueOf() - start);
-          Teradata.executeQuery(queryData[0], queryData[1]).then(callback);
-        };
-
-      });
+	});
 
 
-      this.db.info('Transaction started...');
+	this.db.info('Transaction started...');
 
-      async.series(queries, (results) => {
-
-            
-            callback(results);
-
-
- 
-      });
-
-    });
-
+	async.series(queries, (results) => {
+		callback(results);
+	});
   }
 
   /* Command functions... */
